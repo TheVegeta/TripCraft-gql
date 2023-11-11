@@ -4,6 +4,7 @@ import "reflect-metadata";
 import "./utils";
 
 import cors from "cors";
+import { StatusCodes } from "http-status-codes";
 import HyperExpress from "hyper-express";
 import { __developement, logger, max_body_length } from "./constant";
 import { AppDataSource } from "./data-source";
@@ -32,13 +33,22 @@ import { reqHandler } from "./handler/reqHandler";
   app.use(gqlReqHandler);
   app.use(assetsHandler);
 
-  app.set_not_found_handler((req, res) => {});
+  app.set_not_found_handler((req, res) => {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .send(
+        "Oops! It seems like the page or resource you're looking for could not be found."
+      );
+  });
   app.set_error_handler((req, res, error) => {
     logger.error(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send("Internal Server Error.");
   });
 
   app
     .listen(PORT)
     .then(() => console.info(`> started @${PORT}`))
-    .catch(() => console.info("Failed to start webserver on port 80"));
+    .catch(() => console.info(`Failed to start webserver on port ${PORT}`));
 })();
