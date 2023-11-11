@@ -1,3 +1,5 @@
+import { UploadedFile } from "express-fileupload";
+import { Request } from "polka";
 import { AuthType } from "./entity/User";
 
 export interface IGoogleAuthResponse {
@@ -22,3 +24,7 @@ export interface IJwtAuthResponse {
 export type JwtPayload = {
   [key: string]: any;
 };
+
+export interface ICustomResponse extends Request {
+  files: { [key: string]: UploadedFile };
+}

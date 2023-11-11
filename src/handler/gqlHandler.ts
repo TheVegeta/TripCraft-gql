@@ -1,40 +1,77 @@
-import { Benzene, makeHandler } from "@benzene/http";
-import { makeCompileQuery } from "@benzene/jit";
-import HyperExpress, { Request, Response } from "hyper-express";
+import { envelop, useEngine, useSchema } from "@envelop/core";
+import { useDisableIntrospection } from "@envelop/disable-introspection";
+import { useGraphQlJit } from "@envelop/graphql-jit";
+import { useImmediateIntrospection } from "@envelop/immediate-introspection";
+import { useParserCache } from "@envelop/parser-cache";
+import { createInMemoryCache, useResponseCache } from "@envelop/response-cache";
+import { useValidationCache } from "@envelop/validation-cache";
+import * as GraphQLJS from "graphql";
+import {
+  getGraphQLParameters,
+  processRequest,
+  renderGraphiQL,
+  sendResult,
+  shouldRenderGraphiQL,
+} from "graphql-helix";
+import { Polka, Request, Response } from "polka";
+import { lru } from "tiny-lru";
 import { buildSchema } from "type-graphql";
-import { gqlPath } from "../constant";
+import { __developement } from "../constant";
 import { HelloResolver } from "../resolver/HelloResolver";
+import { toMilliseconds } from "../utils";
 
-const gqlHandler = async () => {
-  const gqlReqHandler = new HyperExpress.Router();
+export const bootstrapGqlHandler = async (app: Polka<Request>) => {
+  const schema = await buildSchema({ resolvers: [HelloResolver] });
 
-  const schema = await buildSchema({
-    resolvers: [HelloResolver],
-    validate: false,
-    emitSchemaFile: {
-      path: gqlPath,
-      sortedSchema: false,
-    },
+  const cache = createInMemoryCache();
+
+  const getEnveloped = envelop({
+    plugins: [
+      useEngine(GraphQLJS),
+      useSchema(schema),
+      useImmediateIntrospection(),
+      useValidationCache(),
+      useParserCache(),
+      useResponseCache({
+        cache,
+        session: () => null,
+        ttl: toMilliseconds(0, 2, 0),
+      }),
+      useGraphQlJit({}, { cache: lru() }),
+      !__developement && useDisableIntrospection(),
+    ],
   });
 
-  const GQL = new Benzene({ schema, compileQuery: makeCompileQuery() });
-
-  const graphqlHTTP = makeHandler(GQL);
-
-  const gqlRequestHandler = async (request: Request, response: Response) => {
-    const body = await request.json();
-    graphqlHTTP({
-      method: request.method,
-      headers: request.headers,
-      body,
-    }).then((result) => {
-      response.status(result.status).json(result.payload);
+  app.use("/graphql", async (req: Request, res: Response) => {
+    const { parse, validate, contextFactory, execute, schema } = getEnveloped({
+      req,
     });
-  };
 
-  gqlReqHandler.post("/graphql", gqlRequestHandler);
+    const request = {
+      body: req.body,
+      headers: req.headers,
+      method: req.method,
+      query: req.query,
+    };
 
-  return { gqlReqHandler };
+    if (shouldRenderGraphiQL(request)) {
+      res.end(renderGraphiQL());
+    } else {
+      const { operationName, query, variables } = getGraphQLParameters(request);
+
+      const result = await processRequest({
+        operationName,
+        query,
+        variables,
+        request,
+        schema,
+        parse,
+        validate,
+        execute,
+        contextFactory,
+      });
+
+      sendResult(result, res);
+    }
+  });
 };
-
-export { gqlHandler };

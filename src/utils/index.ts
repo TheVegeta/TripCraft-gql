@@ -1,7 +1,10 @@
+import stringify from "fast-json-stable-stringify";
 import fs from "fs-extra";
+import { StatusCodes } from "http-status-codes";
 import jwt, { SignOptions } from "jsonwebtoken";
 import LiveDirectory from "live-directory";
-import { loggerPath, uploadPath } from "../constant";
+import polka, { ErrorHandler, IError, Request, Response } from "polka";
+import { logger, loggerPath, uploadPath } from "../constant";
 import { JWT_SECRET } from "../env";
 import { JwtPayload } from "../types";
 
@@ -38,4 +41,38 @@ export const decodeJwt = <T extends JwtPayload>(
   } catch (err) {
     return false;
   }
+};
+
+export const onError: ErrorHandler<Request> = (
+  err: string | IError,
+  req: Request,
+  res: Response,
+  next: VoidFunction
+) => {
+  logger.error(err);
+  res.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+  res.end("Internal Server Error.");
+};
+
+export const megabytesToBytes = (megabytes: number) => {
+  return megabytes * 1024 * 1024;
+};
+
+export const Router = () => polka({ onError });
+
+export const sendJson = <T>(res: Response, data: T) => {
+  res.setHeader("content-type", "application/json");
+  res.end(stringify(data));
+};
+
+export const handleRedirect = (
+  url: string,
+  res: Response,
+  status: number | null = null
+) => {
+  res
+    .writeHead(status || StatusCodes.MOVED_PERMANENTLY, {
+      location: url,
+    })
+    .end();
 };

@@ -25,6 +25,8 @@ export const jwtSignInTime = ms(toMilliseconds(24 * 28, 0, 0)); // 28 days
 
 export const logger = pino({}, pino.destination(loggerPath));
 
+export const fileSize = 1024 * 1024 * 2;
+
 export const authQuery = z.object({
   authJwt: z.string(),
   success: z.string(),
