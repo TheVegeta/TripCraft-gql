@@ -17,13 +17,14 @@ import { Polka, Request, Response } from "polka";
 import { lru } from "tiny-lru";
 import { buildSchema } from "type-graphql";
 import { __developement, gqlPath } from "../constant";
+import { AuthResolver } from "../resolver/AuthResolver";
 import { HelloResolver } from "../resolver/HelloResolver";
 import { IGraphqlContext } from "../types";
 import { toMilliseconds } from "../utils";
 
 export const bootstrapGqlHandler = async (app: Polka<Request>) => {
   const schema = await buildSchema({
-    resolvers: [HelloResolver],
+    resolvers: [HelloResolver, AuthResolver],
     emitSchemaFile: {
       path: gqlPath,
       sortedSchema: false,

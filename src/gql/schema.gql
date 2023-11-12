@@ -4,7 +4,18 @@
 # -----------------------------------------------
 
 type Query {
-  hello: [User!]!
+  hello: String!
+}
+
+type Mutation {
+  authMobileUser(options: IGoogleAuthInput!): IGoogleAuthResponse!
+}
+
+type IGoogleAuthResponse {
+  success: Boolean!
+  msg: String!
+  jwt: String!
+  user: User
 }
 
 type User {
@@ -12,4 +23,8 @@ type User {
   name: String!
   email: String!
   picture: String!
+}
+
+input IGoogleAuthInput {
+  jwt: String!
 }
