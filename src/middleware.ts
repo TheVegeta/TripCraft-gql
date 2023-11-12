@@ -25,6 +25,7 @@ export const isUserAuthenticated: MiddlewareFn<IGraphqlContext> = async (
     } else {
       const user = await User.findOneOrFail({
         where: { _id: jwtResponse._id },
+        cache: true,
       });
 
       if (user) {

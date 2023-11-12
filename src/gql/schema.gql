@@ -4,5 +4,12 @@
 # -----------------------------------------------
 
 type Query {
-  hello: String!
+  hello: [User!]!
+}
+
+type User {
+  _id: String!
+  name: String!
+  email: String!
+  picture: String!
 }

@@ -1,11 +1,13 @@
-import { Query, Resolver, UseMiddleware } from "type-graphql";
-import { isUserAuthenticated } from "../middleware";
+import { Query, Resolver } from "type-graphql";
+import { User } from "../entity/User";
 
 @Resolver()
 export class HelloResolver {
-  @UseMiddleware([isUserAuthenticated])
-  @Query(() => String)
-  async hello() {
-    return "world";
+  // @UseMiddleware([isUserAuthenticated])
+  @Query(() => [User])
+  async hello(): Promise<User[]> {
+    await new Promise((r) => setTimeout(r, 5000));
+
+    return await User.find();
   }
 }

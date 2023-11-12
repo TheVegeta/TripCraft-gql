@@ -16,6 +16,6 @@ export const AppDataSource = new DataSource({
   subscribers: [],
   migrations: [],
   cache: {
-    duration: toMilliseconds(0, 1, 0),
+    duration: toMilliseconds(0, 2, 0),
   },
 });

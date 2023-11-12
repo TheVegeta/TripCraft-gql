@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   BeforeInsert,
@@ -17,18 +17,22 @@ export enum AuthType {
 }
 
 @Entity()
+@ObjectType({ simpleResolvers: true })
 export class User extends BaseEntity {
   @Field()
   @PrimaryColumn()
   _id!: string;
 
   @Column()
+  @Field()
   name!: string;
 
   @Column()
+  @Field()
   email!: string;
 
   @Column()
+  @Field()
   picture!: string;
 
   @Column({
