@@ -1,6 +1,12 @@
 import { UploadedFile } from "express-fileupload";
-import { Request } from "polka";
-import { AuthType } from "./entity/User";
+import { Request, Response } from "polka";
+import { AuthType, User } from "./entity/User";
+
+export interface IGraphqlContext {
+  req: Request;
+  res: Response;
+  user?: User;
+}
 
 export interface IGoogleAuthResponse {
   id: string;

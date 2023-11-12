@@ -18,6 +18,7 @@ import { lru } from "tiny-lru";
 import { buildSchema } from "type-graphql";
 import { __developement, gqlPath } from "../constant";
 import { HelloResolver } from "../resolver/HelloResolver";
+import { IGraphqlContext } from "../types";
 import { toMilliseconds } from "../utils";
 
 export const bootstrapGqlHandler = async (app: Polka<Request>) => {
@@ -50,9 +51,11 @@ export const bootstrapGqlHandler = async (app: Polka<Request>) => {
   });
 
   app.use("/graphql", async (req: Request, res: Response) => {
-    const { parse, validate, contextFactory, execute, schema } = getEnveloped({
-      req,
-    });
+    const { parse, validate, contextFactory, execute, schema } =
+      getEnveloped<IGraphqlContext>({
+        req,
+        res,
+      });
 
     const request = {
       body: req.body,

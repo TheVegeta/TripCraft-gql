@@ -11,6 +11,7 @@ const esbuildPluginTsc = require("esbuild-plugin-tsc");
     minifySyntax: true,
     minifyIdentifiers: true,
     minifyWhitespace: false,
+    treeShaking: true,
     sourcemap: true,
     drop: ["debugger"],
     plugins: [
