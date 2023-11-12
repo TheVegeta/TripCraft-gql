@@ -9,6 +9,7 @@ import http from "http";
 import { StatusCodes } from "http-status-codes";
 import polka, { Request, Response } from "polka";
 import { __developement } from "./constant";
+import { AppDataSource } from "./data-source";
 import { PORT } from "./env";
 import { bootstrapAuthHandler } from "./handler/authHandler";
 import { bootstrapFileHandler } from "./handler/fileHandler";
@@ -44,6 +45,8 @@ import { onError } from "./utils";
         "Oops! It seems like the page or resource you're looking for could not be found."
       );
     });
+
+    await AppDataSource.initialize();
 
     app.listen(PORT, () => {
       console.info(`> started @${PORT}`);

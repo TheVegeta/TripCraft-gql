@@ -27,6 +27,7 @@ export const bootstrapGqlHandler = async (app: Polka<Request>) => {
       path: gqlPath,
       sortedSchema: false,
     },
+    validate: false,
   });
 
   const cache = createInMemoryCache();
