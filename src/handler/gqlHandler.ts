@@ -16,12 +16,18 @@ import {
 import { Polka, Request, Response } from "polka";
 import { lru } from "tiny-lru";
 import { buildSchema } from "type-graphql";
-import { __developement } from "../constant";
+import { __developement, gqlPath } from "../constant";
 import { HelloResolver } from "../resolver/HelloResolver";
 import { toMilliseconds } from "../utils";
 
 export const bootstrapGqlHandler = async (app: Polka<Request>) => {
-  const schema = await buildSchema({ resolvers: [HelloResolver] });
+  const schema = await buildSchema({
+    resolvers: [HelloResolver],
+    emitSchemaFile: {
+      path: gqlPath,
+      sortedSchema: false,
+    },
+  });
 
   const cache = createInMemoryCache();
 

@@ -5,6 +5,7 @@ import "./utils";
 
 import { json } from "body-parser";
 import cors from "cors";
+import http from "http";
 import { StatusCodes } from "http-status-codes";
 import polka, { Request, Response } from "polka";
 import { __developement } from "./constant";
@@ -16,7 +17,9 @@ import { onError } from "./utils";
 
 (async () => {
   try {
-    const app = polka({ onError });
+    const server = http.createServer();
+
+    const app = polka({ onError, server });
 
     if (__developement === true) {
       app.use(cors());
