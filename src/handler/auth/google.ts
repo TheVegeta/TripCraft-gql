@@ -1,26 +1,26 @@
-import * as axios from "axios";
+import axios from "axios";
 import { StatusCodes } from "http-status-codes";
+import { Request, Response, Server } from "hyper-express";
 import _ from "lodash";
-import { Polka, Request, Response } from "polka";
-import { googleSignInJwtTime } from "../constant";
-import { AuthType, User } from "../entity/User";
+import { AuthType, User } from "../../entity/User";
+import { signJwt } from "../../helpers";
+import { IGoogleAuthResponse, IJwtAuthResponse } from "../../types";
+import { googleSignInJwtTime } from "../../utils/constant";
 import {
   GOOGLE_AUTH_REDIRECT_URI,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-} from "../env";
-import { IGoogleAuthResponse, IJwtAuthResponse } from "../types";
-import { handleRedirect, signJwt } from "../utils";
+} from "../../utils/env";
 
-export const bootstrapAuthHandler = (app: Polka<Request>) => {
-  app.get("/auth/google", async (req: Request, res: Response) => {
+export const googleAuthHandler = (server: Server) => {
+  server.get("/auth/google", async (req: Request, res: Response) => {
     const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_AUTH_REDIRECT_URI}&response_type=code&scope=profile email`;
-    handleRedirect(authUrl, res);
+    res.redirect(authUrl);
   });
 
-  app.get("/auth/google/callback", async (req: Request, res: Response) => {
+  server.get("/auth/google/callback", async (req: Request, res: Response) => {
     try {
-      const tokenResponse = await axios.default.post(
+      const tokenResponse = await axios.post(
         "https://oauth2.googleapis.com/token",
         {
           client_id: GOOGLE_CLIENT_ID,
@@ -33,7 +33,7 @@ export const bootstrapAuthHandler = (app: Polka<Request>) => {
 
       const accessToken = tokenResponse.data.access_token;
 
-      const profileResponse = await axios.default.get<IGoogleAuthResponse>(
+      const profileResponse = await axios.get<IGoogleAuthResponse>(
         "https://www.googleapis.com/oauth2/v2/userinfo",
         {
           headers: {
@@ -59,10 +59,7 @@ export const bootstrapAuthHandler = (app: Polka<Request>) => {
           },
           { expiresIn: googleSignInJwtTime }
         );
-        handleRedirect(
-          `/auth/google/app?authJwt=${jwtToken}&success=true`,
-          res
-        );
+        res.redirect(`/auth/google/app?authJwt=${jwtToken}&success=true`);
       } else {
         const newUser = new User();
         newUser.authType = AuthType.GOOGLE;
@@ -82,26 +79,27 @@ export const bootstrapAuthHandler = (app: Polka<Request>) => {
           },
           { expiresIn: googleSignInJwtTime }
         );
-        handleRedirect(
-          `/auth/google/app?authJwt=${jwtToken}&success=true`,
-          res
-        );
+        res.redirect(`/auth/google/app?authJwt=${jwtToken}&success=true`);
       }
     } catch (error) {
       const jwtToken = "";
-      handleRedirect(
-        `/auth/google/app?authJwt=${jwtToken}&success=false`,
-        res,
-        StatusCodes.UNAUTHORIZED
-      );
+      res.statusCode = StatusCodes.UNAUTHORIZED;
+      res.redirect(`/auth/google/app?authJwt=${jwtToken}&success=false`);
     }
   });
 
-  app.get("/auth/google/app", async (req: Request, res: Response) => {
+  server.get("/auth/google/app", async (req: Request, res: Response) => {
     try {
-      res.end(
-        "Success! Your authentication is complete. We're redirecting you to the app for an awesome experience."
-      );
+      if (req.query.success === "true") {
+        res.end(
+          "Success! Your authentication is complete. We're redirecting you to the app for an awesome experience."
+        );
+      } else {
+        res.statusCode = StatusCodes.UNAUTHORIZED;
+        res.end(
+          "Authentication unsuccessful. It seems there's an issue with your credentials. Verify and attempt authentication again."
+        );
+      }
     } catch (err) {
       res.statusCode = StatusCodes.UNAUTHORIZED;
       res.end(

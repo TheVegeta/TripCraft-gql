@@ -1,11 +1,10 @@
-import { UploadedFile } from "express-fileupload";
-import { Request, Response } from "polka";
+import { Request, Response } from "hyper-express";
 import { AuthType, User } from "./entity/User";
 
-export interface IGraphqlContext {
+export interface IGqlContext {
   req: Request;
   res: Response;
-  user?: User;
+  user: User;
 }
 
 export interface IGoogleAuthResponse {
@@ -25,12 +24,4 @@ export interface IJwtAuthResponse {
   name: string;
   picture: string;
   authType: AuthType;
-}
-
-export type JwtPayload = {
-  [key: string]: any;
-};
-
-export interface ICustomResponse extends Request {
-  files: { [key: string]: UploadedFile };
 }

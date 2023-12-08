@@ -2,21 +2,21 @@ import { parseEnv } from "znv";
 import { z } from "zod";
 
 export const {
+  DB_NAME,
+  DB_PASS,
+  DB_USER,
   PORT,
-  PG_DB_NAME,
-  PG_DB_PASS,
-  PG_DB_USER,
+  GOOGLE_AUTH_REDIRECT_URI,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_AUTH_REDIRECT_URI,
   JWT_SECRET,
 } = parseEnv(process.env, {
-  PORT: z.number(),
-  PG_DB_NAME: z.string(),
-  PG_DB_USER: z.string(),
-  PG_DB_PASS: z.string(),
+  PORT: z.number().min(1),
+  DB_USER: z.string(),
+  DB_PASS: z.string(),
+  DB_NAME: z.string(),
+  GOOGLE_AUTH_REDIRECT_URI: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  GOOGLE_AUTH_REDIRECT_URI: z.string(),
   JWT_SECRET: z.string(),
 });

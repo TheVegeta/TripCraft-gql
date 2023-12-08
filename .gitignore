@@ -1,7 +1,3 @@
 node_modules
-uploads
-
-logger.log
 .env
-
-lib
+upload

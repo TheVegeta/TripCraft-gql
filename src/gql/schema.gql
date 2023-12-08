@@ -3,28 +3,28 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-type Query {
-  hello: String!
+input IGoogleAuthInput {
+  jwt: String!
+}
+
+type IGoogleAuthResponse {
+  jwt: String!
+  msg: String!
+  success: Boolean!
+  user: User
 }
 
 type Mutation {
   authMobileUser(options: IGoogleAuthInput!): IGoogleAuthResponse!
 }
 
-type IGoogleAuthResponse {
-  success: Boolean!
-  msg: String!
-  jwt: String!
-  user: User
+type Query {
+  hello: String!
 }
 
 type User {
   _id: String!
-  name: String!
   email: String!
+  name: String!
   picture: String!
-}
-
-input IGoogleAuthInput {
-  jwt: String!
 }

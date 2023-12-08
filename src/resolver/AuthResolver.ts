@@ -6,10 +6,10 @@ import {
   ObjectType,
   Resolver,
 } from "type-graphql";
-import { jwtSignInTime } from "../constant";
 import { User } from "../entity/User";
+import { decodeJwt, signJwt } from "../helpers";
 import { IJwtAuthResponse } from "../types";
-import { decodeJwt, signJwt } from "../utils";
+import { jwtSignInTime } from "../utils/constant";
 import { personJwtValidator } from "../utils/validator";
 
 @InputType()

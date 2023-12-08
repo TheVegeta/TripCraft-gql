@@ -1,21 +1,17 @@
 import { DataSource } from "typeorm";
-import { entityPath } from "./constant";
-import { PG_DB_NAME, PG_DB_PASS, PG_DB_USER } from "./env";
-import { toMilliseconds } from "./utils";
+import { entityPath } from "./utils/constant";
+import { DB_NAME, DB_PASS, DB_USER } from "./utils/env";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
   port: 5432,
-  username: PG_DB_USER,
-  password: PG_DB_PASS,
-  database: PG_DB_NAME,
+  username: DB_USER,
+  password: DB_PASS,
+  database: DB_NAME,
   synchronize: true,
   logging: false,
   entities: [entityPath],
   subscribers: [],
   migrations: [],
-  cache: {
-    duration: toMilliseconds(0, 2, 0),
-  },
 });

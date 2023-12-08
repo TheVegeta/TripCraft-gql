@@ -19,20 +19,20 @@ export enum AuthType {
 @Entity()
 @ObjectType({ simpleResolvers: true })
 export class User extends BaseEntity {
-  @Field()
   @PrimaryColumn()
+  @Field()
   _id!: string;
 
-  @Column()
   @Field()
+  @Column()
   name!: string;
 
-  @Column()
   @Field()
+  @Column()
   email!: string;
 
-  @Column()
   @Field()
+  @Column()
   picture!: string;
 
   @Column({
