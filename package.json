@@ -26,6 +26,7 @@
     "@graphql-yoga/plugin-disable-introspection": "^2.0.1",
     "@graphql-yoga/plugin-response-cache": "^3.1.1",
     "axios": "^1.6.2",
+    "cheerio": "1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "fs-extra": "^11.2.0",
