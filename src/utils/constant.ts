@@ -8,6 +8,8 @@ export const __dev = process.env.NODE_ENV !== "production";
 
 export const max_body_length = 1024 * 1024 * 5; // 5mb size limit
 
+export const DDG_URL = "https://html.duckduckgo.com/html/";
+
 export const ensureDir = ["upload", "src/gql"];
 
 export const entityPath = path.resolve(__dirname + "/entity/**/*.ts");

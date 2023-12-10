@@ -9,6 +9,7 @@ import {
 import { GraphQLSchema } from "graphql";
 import { createYoga } from "graphql-yoga";
 import { Server } from "hyper-express";
+import { toMilliseconds } from "../helpers";
 import { IGqlContext } from "../types";
 import { __dev } from "../utils/constant";
 
@@ -25,8 +26,11 @@ export const gqlHandler = (server: Server, schema: GraphQLSchema) => {
       useGraphQlJit({ customJSONSerializer: true }),
       useResponseCache({
         session: () => null,
-        ttl: 10000,
+        ttl: toMilliseconds(0, 0, 30),
         cache,
+        ttlPerSchemaCoordinate: {
+          "Query.getSearch": toMilliseconds(0, 30, 0),
+        },
       }),
     ],
   });
