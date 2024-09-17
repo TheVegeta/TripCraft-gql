@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Field, InputType } from "type-graphql";
+import { Field } from "type-graphql";
 import {
   BaseEntity,
   BeforeInsert,
@@ -12,21 +12,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@InputType()
-export class ICreateUser {
-  @Field({ nullable: true })
-  _id?: string;
-
-  @Field()
-  name!: string;
-
-  @Field()
-  email!: string;
-
-  @Field()
-  picture!: string;
-}
-
 @Entity()
 export class User extends BaseEntity {
   @Field()
@@ -35,6 +20,10 @@ export class User extends BaseEntity {
 
   @Field()
   @Column()
+  googleId!: string;
+
+  @Field()
+  @Column()
   name!: string;
 
   @Field()
@@ -45,8 +34,8 @@ export class User extends BaseEntity {
   @Column()
   picture!: string;
 
-  @ManyToOne(() => User)
-  createdBy!: User;
+  @ManyToOne(() => User, { nullable: true })
+  createdBy?: User;
 
   @ManyToOne(() => User, { nullable: true })
   updatedBy?: User;

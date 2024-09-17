@@ -12,6 +12,7 @@ import { gqlRoute } from "./routes/gql";
   const app = express();
 
   app.use(cors());
+  app.use(express.json());
   app.use(gqlRoute);
 
   app.listen(PORT, () => {

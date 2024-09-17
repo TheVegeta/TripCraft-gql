@@ -10,6 +10,7 @@ import { Request, Response, Router } from "express";
 import { createYoga } from "graphql-yoga";
 import { buildSchemaSync } from "type-graphql";
 import { __dev } from "../constant";
+import { AuthResolver } from "../resolver/AuthResolver";
 import { HelloResolver } from "../resolver/HelloResolver";
 import { toMilliseconds } from "../utils";
 
@@ -18,7 +19,7 @@ const cache = createInMemoryCache();
 
 const yoga = createYoga<{ req: Request; res: Response }>({
   schema: buildSchemaSync({
-    resolvers: [HelloResolver],
+    resolvers: [HelloResolver, AuthResolver],
     validate: false,
     emitSchemaFile: "schema.gql",
   }),

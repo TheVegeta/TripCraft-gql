@@ -3,6 +3,24 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input IGoogleAuth {
+  email: String!
+  id: String!
+  name: String!
+  photo: String!
+  token: String!
+}
+
+type IStatusResponse {
+  data: String!
+  msg: String!
+  success: Boolean!
+}
+
+type Mutation {
+  signInWithGoogle(options: IGoogleAuth!): IStatusResponse!
+}
+
 type Query {
   hello: String!
 }

@@ -8,6 +8,24 @@ export class IGetById {
   id!: string;
 }
 
+@InputType()
+export class IGoogleAuth {
+  @Field()
+  id!: string;
+
+  @Field()
+  email!: string;
+
+  @Field()
+  name!: string;
+
+  @Field()
+  photo!: string;
+
+  @Field()
+  token!: string;
+}
+
 @ObjectType()
 export class IStatusResponse {
   @Field()
@@ -28,4 +46,22 @@ export interface MyContext {
   req: Request;
   res: Response;
   user: User;
+}
+
+export interface IGoogleAuthResponse {
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  email: string;
+  email_verified: string;
+  name: string;
+  picture: string;
+  given_name: string;
+  family_name: string;
+  iat: string;
+  exp: string;
+  alg: string;
+  kid: string;
+  typ: string;
 }
