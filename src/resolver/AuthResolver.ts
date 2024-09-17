@@ -35,7 +35,7 @@ export class AuthResolver {
 
         newUser.googleId = id;
         newUser.name = response.data.name;
-        newUser.email = response.data.email;
+        newUser.email = _.toLower(response.data.email);
         newUser.picture = response.data.picture;
 
         await newUser.save();
