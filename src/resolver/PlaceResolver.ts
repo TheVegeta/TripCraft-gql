@@ -7,55 +7,67 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { ICreateItinerary, Itinerary } from "../entities/Itinerary";
+import { ICreatePlaces, Places } from "../entities/Places";
 import { isAuth } from "../middleware";
 import { IGetById, IStatusResponse, MyContext } from "../types";
 
 @Resolver()
-export class ItineraryResolver {
-  @Query(() => [Itinerary])
+export class PlacesResolver {
+  @Query(() => [Places])
   @UseMiddleware([isAuth])
-  async getAllItinerary(@Ctx() { user }: MyContext): Promise<Itinerary[]> {
-    return await Itinerary.find({ where: { createdBy: { _id: user._id } } });
-  }
-
-  @Query(() => Itinerary)
-  @UseMiddleware([isAuth])
-  async getItineraryById(
+  async getAllPlaces(
     @Arg("options") options: IGetById,
     @Ctx() { user }: MyContext
-  ): Promise<Itinerary> {
-    return await Itinerary.findOneOrFail({
-      where: { createdBy: { _id: user._id }, _id: options.id },
+  ): Promise<Places[]> {
+    return await Places.find({
+      where: { createdBy: { _id: user._id }, itinerary: { _id: options.id } },
+    });
+  }
+
+  @Query(() => Places)
+  async getPlaceById(@Arg("options") options: IGetById): Promise<Places> {
+    return await Places.findOneOrFail({
+      where: { _id: options.id },
     });
   }
 
   @Mutation(() => IStatusResponse)
   @UseMiddleware([isAuth])
-  async createOrUpdateItinerary(
-    @Arg("options") options: ICreateItinerary,
+  async createOrUpdatePlace(
+    @Arg("options") options: ICreatePlaces,
     @Ctx() { user }: MyContext
   ): Promise<IStatusResponse> {
     try {
-      const { _id, endDate, latitude, longitude, name, placeName, startDate } =
-        options;
+      const {
+        _id,
+        name,
+        latitude,
+        longitude,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        remark,
+      } = options;
 
-      let record: Itinerary;
+      let record: Places;
 
       if (_id) {
-        record = await Itinerary.findOneOrFail({ where: { _id } });
+        record = await Places.findOneOrFail({ where: { _id } });
         record.updatedBy = user;
       } else {
-        record = new Itinerary();
+        record = new Places();
         record.createdBy = user;
       }
 
       record.name = name;
-      record.placeName = placeName;
       record.latitude = latitude;
       record.longitude = longitude;
-      record.endDate = moment(endDate).toDate();
       record.startDate = moment(startDate).toDate();
+      record.endDate = moment(endDate).toDate();
+      record.startTime = moment(startTime).toDate();
+      record.endTime = moment(endTime).toDate();
+      record.remark = remark;
 
       await record.save();
       return { success: true };
@@ -66,12 +78,12 @@ export class ItineraryResolver {
 
   @Mutation(() => IStatusResponse)
   @UseMiddleware([isAuth])
-  async deleteItinerary(
+  async deletePlace(
     @Arg("options") options: IGetById,
     @Ctx() { user }: MyContext
   ): Promise<IStatusResponse> {
     try {
-      const record = await Itinerary.findOneOrFail({
+      const record = await Places.findOneOrFail({
         where: { _id: options.id },
       });
 

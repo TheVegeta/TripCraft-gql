@@ -10,9 +10,11 @@ import { Request, Response, Router } from "express";
 import { createYoga } from "graphql-yoga";
 import { buildSchemaSync } from "type-graphql";
 import { __dev } from "../constant";
+import { ActivityResolver } from "../resolver/ActivityResolver";
 import { AuthResolver } from "../resolver/AuthResolver";
 import { HelloResolver } from "../resolver/HelloResolver";
 import { ItineraryResolver } from "../resolver/ItineraryResolver";
+import { PlacesResolver } from "../resolver/PlaceResolver";
 import { toMilliseconds } from "../utils";
 
 const gqlRoute = Router();
@@ -20,7 +22,13 @@ const cache = createInMemoryCache();
 
 const yoga = createYoga<{ req: Request; res: Response }>({
   schema: buildSchemaSync({
-    resolvers: [HelloResolver, AuthResolver, ItineraryResolver],
+    resolvers: [
+      HelloResolver,
+      AuthResolver,
+      ItineraryResolver,
+      ActivityResolver,
+      PlacesResolver,
+    ],
     validate: false,
     emitSchemaFile: "schema.gql",
   }),
