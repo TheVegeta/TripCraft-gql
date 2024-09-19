@@ -2,15 +2,19 @@ import axios from "axios";
 import _ from "lodash";
 import { Arg, Mutation, Resolver } from "type-graphql";
 import { User } from "../entities/User";
-import { IGoogleAuth, IGoogleAuthResponse, IStatusResponse } from "../types";
+import {
+  IAuthStatusResponse,
+  IGoogleAuth,
+  IGoogleAuthResponse,
+} from "../types";
 import { signJwt } from "../utils";
 
 @Resolver()
 export class AuthResolver {
-  @Mutation(() => IStatusResponse)
+  @Mutation(() => IAuthStatusResponse)
   async signInWithGoogle(
     @Arg("options") options: IGoogleAuth
-  ): Promise<IStatusResponse> {
+  ): Promise<IAuthStatusResponse> {
     try {
       const { id, token } = options;
 

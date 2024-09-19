@@ -30,12 +30,18 @@ export class IGoogleAuth {
 export class IStatusResponse {
   @Field()
   success!: boolean;
+}
 
+@ObjectType()
+export class IAuthStatusResponse {
   @Field()
-  msg!: string;
+  success!: boolean;
 
   @Field()
   data!: string;
+
+  @Field()
+  msg!: string;
 }
 
 export interface IJwtEncode {
