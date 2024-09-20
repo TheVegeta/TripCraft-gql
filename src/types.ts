@@ -27,6 +27,12 @@ export class IGoogleAuth {
 }
 
 @ObjectType()
+export class IItineraryToken {
+  @Field()
+  code!: string;
+}
+
+@ObjectType()
 export class IStatusResponse {
   @Field()
   success!: boolean;
