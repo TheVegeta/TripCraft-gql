@@ -3,6 +3,19 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Activity {
+  _id: String!
+  endDate: DateTimeISO!
+  endTime: DateTimeISO!
+  latitude: String!
+  longitude: String!
+  name: String!
+  placeName: String!
+  remark: String!
+  startDate: DateTimeISO!
+  startTime: DateTimeISO!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format.
 """
@@ -12,6 +25,19 @@ type IAuthStatusResponse {
   data: String!
   msg: String!
   success: Boolean!
+}
+
+input ICreateActivity {
+  _id: String
+  endDate: String!
+  endTime: String!
+  latitude: String!
+  longitude: String!
+  name: String!
+  placeName: String!
+  remark: String!
+  startDate: String!
+  startTime: String!
 }
 
 input ICreateItinerary {
@@ -24,6 +50,18 @@ input ICreateItinerary {
   startDate: String!
 }
 
+input ICreatePlaces {
+  _id: String
+  endDate: String!
+  endTime: String!
+  latitude: String!
+  longitude: String!
+  name: String!
+  remark: String!
+  startDate: String!
+  startTime: String!
+}
+
 input IGetById {
   id: String!
 }
@@ -34,6 +72,10 @@ input IGoogleAuth {
   name: String!
   photo: String!
   token: String!
+}
+
+type IItineraryToken {
+  code: String!
 }
 
 type IStatusResponse {
@@ -51,13 +93,41 @@ type Itinerary {
 }
 
 type Mutation {
+  createOrUpdateActivity(options: ICreateActivity!): IStatusResponse!
   createOrUpdateItinerary(options: ICreateItinerary!): IStatusResponse!
+  createOrUpdatePlace(options: ICreatePlaces!): IStatusResponse!
+  deleteActivity(options: IGetById!): IStatusResponse!
   deleteItinerary(options: IGetById!): IStatusResponse!
+  deletePlace(options: IGetById!): IStatusResponse!
+  inviteTripmate(options: IGetById!): IItineraryToken!
+  joinTripmate(options: IGetById!): IStatusResponse!
   signInWithGoogle(options: IGoogleAuth!): IAuthStatusResponse!
 }
 
+type Places {
+  _id: String!
+  endDate: DateTimeISO!
+  endTime: DateTimeISO!
+  latitude: String!
+  longitude: String!
+  name: String!
+  remark: String!
+  startDate: DateTimeISO!
+  startTime: DateTimeISO!
+}
+
 type Query {
+  getActivityById(options: IGetById!): Activity!
+  getAllActivities(options: IGetById!): [Activity!]!
   getAllItinerary: [Itinerary!]!
+  getAllJoinItinerary: [Tripmate!]!
+  getAllPlaces(options: IGetById!): [Places!]!
   getItineraryById(options: IGetById!): Itinerary!
+  getPlaceById(options: IGetById!): Places!
   hello: String!
+}
+
+type Tripmate {
+  _id: String!
+  itinerary: Itinerary
 }
